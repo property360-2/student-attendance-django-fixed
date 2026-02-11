@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Mark Attendance</h2>
+
+    <!-- Date selector -->
+    <form method="get" class="mb-4">
+        {{ date_form.date.label_tag }}
+        {{ date_form.date }}
+        <button type="submit" class="btn btn-primary ms-2">Load</button>
+    </form>
+
+    <!-- Attendance form -->
+    <form method="post">
+        {% csrf_token %}
+
+        {# REQUIRED: management form para gumana ang formset #}
+        {{ formset.management_form }}
+
+        {% if date %}
+        <input type="hidden" name="date" value="{{ date|date:'Y-m-d' }}">
+        {% else %}
+        <input type="hidden" name="date" value="{{ date_form.date.value }}">
+        {% endif %}
+
+        {% if formset.non_form_errors %}
+            <div class="alert alert-danger">
+                {{ formset.non_form_errors }}
+            </div>
+        {% endif %}
+        
+        {% if date_form.errors %}
+            <div class="alert alert-danger">
+                <strong>Date Error:</strong> {{ date_form.errors }}
+            </div>
+        {% endif %}
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                    <th>Late Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for student, form in rows %}
+                    <tr>
+                        <td>
+                            {{ form.student_id }} {# hidden input #}
+                            {{ student }}
+                        </td>
+                        <td>
+                            {{ form.status }}
+                            {% if form.errors %}
+                                <div class="text-danger small">
+                                    {{ form.errors }}
+                                </div>
+                            {% endif %}
+                    </td>
+                    <td>
+                        {{ form.remarks }}
+                    </td>
+                    <td>
+                        {{ form.late_reason }}
+                    </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                    <td colspan="3" class="text-center">
+                            No students found.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn btn-success">
+            Save Attendance
+        </button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+<!-- [templates/students/student_form.html] -->
+{% extends 'base.html' %}
+{% block title %}Student Form · AttendLite{% endblock %}
+{% block content %}
+<div class="panel">
+    <div class="panel-header">
+        <h3>{{ view.object|default_if_none:"Add Student" }}</h3>
+    </div>
+    <form method="post" class="form">
+        {% csrf_token %}
+        <div class="grid-2">
+            <div class="form-row"><label>First name</label>{{ form.first_name }}</div>
+            <div class="form-row"><label>Last name</label>{{ form.last_name }}</div>
+            <div class="form-row"><label>Email</label>{{ form.email }}</div>
+            <div class="form-row"><label>Student ID</label>{{ form.student_id }}</div>
+            <div class="form-row"><label>Class / Section</label>{{ form.class_section }}</div>
+            <div class="form-row checkbox-row"><label>Active</label>{{ form.is_active }}</div>
+        </div>
+        <div class="mt-2">
+            {% include 'components/atoms/button.html' with label='Save' type='submit' %}
+            {% include 'components/atoms/button.html' with label='Cancel' href='/students/' type='link-secondary' %}
+        </div>
+    </form>
+</div>
+{% endblock %}

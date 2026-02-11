@@ -1,0 +1,53 @@
+<!-- [templates/attendance/attendance_list.html] -->
+{% extends 'base.html' %}
+{% block title %}Attendance · AttendLite{% endblock %}
+{% block content %}
+<div class="panel">
+    <div class="panel-header">
+        <h3>Attendance Records{% if selected_student %} – {{ selected_student }}{% elif selected_date %} – {{ selected_date }}{% endif %}</h3>
+        <div class="panel-actions">
+            <form method="get" class="inline">
+                {% if request.GET.student %}
+                <input type="hidden" name="student" value="{{ request.GET.student }}">
+                {% endif %}
+                <input class="input" type="date" name="date" value="{{ selected_date|default:'' }}"/>
+                {% include 'components/atoms/button.html' with label='Filter' type='submit' %}
+            </form>
+            {% if selected_student %}
+            <a href="/attendance/" class="btn secondary">Clear Filter</a>
+            {% endif %}
+            {% include 'components/atoms/button.html' with label='Mark Attendance' href='/attendance/mark/' type='link' %}
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Student</th>
+                    <th>Class / Section</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                    <th>Late Reason</th>
+                    <th>By</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in records %}
+                    <tr>
+                        <td>{{ r.date }}</td>
+                        <td>{{ r.student }}</td>
+                        <td>{{ r.student.class_section|default:'—' }}</td>
+                        <td>{% include 'components/atoms/badge.html' with text=r.get_status_display tone=r.status %}</td>
+                        <td>{{ r.remarks }}</td>
+                        <td>{{ r.late_reason }}</td>
+                        <td>{{ r.created_by|default:'—' }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5">No records.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+<!-- [templates/components/molecules/navbar.html] -->
+<div class="navbar">
+    <div class="navbar-left">
+        <h2 class="page-title">{% block page_title %}{% endblock %}</h2>
+    </div>
+    <div class="navbar-right">
+        <span class="welcome">Hi, {{ request.user.username }}</span>
+        <a class="link" href="{% url 'accounts:logout' %}">Logout</a>
+    </div>
+</div>

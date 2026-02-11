@@ -1,0 +1,12 @@
+<!-- [templates/components/atoms/button.html] -->
+{% if type == 'submit' %}
+    <button class="btn" type="submit">{{ label }}</button>
+{% elif type == 'submit-danger' %}
+    <button class="btn danger" type="submit">{{ label }}</button>
+{% elif type == 'link' %}
+    <a class="btn" href="{{ href }}">{{ label }}</a>
+{% elif type == 'link-secondary' %}
+    <a class="btn secondary" href="{{ href }}">{{ label }}</a>
+{% else %}
+    <button class="btn" type="button">{{ label }}</button>
+{% endif %}

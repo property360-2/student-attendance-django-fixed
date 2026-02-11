@@ -1,0 +1,10 @@
+<!-- [templates/components/atoms/badge.html] -->
+{% if tone == 'present' or tone == 'success' %}
+    <span class="badge success">{{ text }}</span>
+{% elif tone == 'late' or tone == 'warning' %}
+    <span class="badge warning">{{ text }}</span>
+{% elif tone == 'absent' or tone == 'danger' %}
+    <span class="badge danger">{{ text }}</span>
+{% else %}
+    <span class="badge">{{ text }}</span>
+{% endif %}

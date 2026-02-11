@@ -1,0 +1,16 @@
+<!-- [templates/students/student_confirm_delete.html] -->
+{% extends 'base.html' %}
+{% block title %}Delete Student · AttendLite{% endblock %}
+{% block content %}
+<div class="panel">
+    <div class="panel-header">
+        <h3>Delete Student</h3>
+    </div>
+    <p>Are you sure you want to delete <strong>{{ object }}</strong>?</p>
+    <form method="post">
+        {% csrf_token %}
+        {% include 'components/atoms/button.html' with label='Confirm Delete' type='submit-danger' %}
+        {% include 'components/atoms/button.html' with label='Cancel' href='/students/' type='link-secondary' %}
+    </form>
+</div>
+{% endblock %}
