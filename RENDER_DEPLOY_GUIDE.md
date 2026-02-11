@@ -23,16 +23,17 @@ This guide provides step-by-step instructions to host your Django application on
 
 ---
 
-## 💾 Step 2: Configure Persistent Disk (SQLite Storage)
-*Since SQLite is a file-based database, we need a disk to prevent data loss on every deploy.*
+## 💾 Step 2: Configure Persistent Disk (Recommended)
+*Render's filesystem is ephemeral. If you don't use a Disk, your database will be reset to empty on every restart/deploy.*
 
 1. In your Web Service dashboard, go to the **Disk** tab.
 2. Click **Add Disk**.
 3. Set the following:
    - **Name:** `sqlite-data`
    - **Mount Path:** `/data`
-   - **Size:** `1GB` (Minimum is enough for thousands of records)
+   - **Size:** `1GB`
 4. Click **Add Disk**.
+5. **Alternatively:** If you really want the DB in the codebase and don't care about persistence across deploys, you can skip this step and remove `DATABASE_PATH` from environment variables.
 
 ---
 

@@ -68,8 +68,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'student_attendance.wsgi.application'
 
-# Database - Render SQLite Configuration with Persistent Disk
-# On Render, we mount a disk at /data. We store db.sqlite3 there.
+# Database - Default to project root (codebase)
+# For Render persistence, you can still set DATABASE_PATH to a persistent mount point.
 DATABASE_PATH = os.environ.get('DATABASE_PATH')
 if DATABASE_PATH:
     DB_FILE = Path(DATABASE_PATH) / 'db.sqlite3'
