@@ -1,50 +1,127 @@
+<!-- [templates/accounts/register.html] -->
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Register · AttendLite</title>
+    <title>Create Account | AttendLite</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <style>
+        .login-page {
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 20px;
+        }
+        [data-theme="dark"] .login-page {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        .login-card {
+            width: 100%;
+            max-width: 440px;
+            padding: 40px;
+            text-align: center;
+        }
+        .login-logo {
+            margin-bottom: 32px;
+            display: inline-flex;
+            justify-content: center;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--line);
+            background: var(--bg);
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+    </style>
 </head>
-<body class="light login-page">
-    <div class="login-card">
-        {% include 'components/atoms/brand.html' with brand='AttendLite' %}
-        <h1 class="mt-2">Create Account</h1>
-        <form method="post" class="form">
+<body class="login-page">
+    <div class="login-card panel glass">
+        <div class="login-logo">
+            {% include 'components/atoms/brand.html' with brand='AttendLite' %}
+        </div>
+        
+        <h1 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 8px;">Create Account</h1>
+        <p style="color: var(--text-muted); margin-bottom: 32px;">Join AttendLite for premium student tracking.</p>
+        
+        <form method="post" novalidate>
             {% csrf_token %}
-            {% if form.non_field_errors %}
-                <p class="error">{{ form.non_field_errors }}</p>
-            {% endif %}
-            <div class="form-row">
-                <label>Username</label>
-                {{ form.username }}
+            
+            <div style="text-align: left; margin-bottom: 20px;">
+                <label style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 8px;">Username</label>
+                <div style="position: relative;">
+                    <i class="material-icons-round" style="position: absolute; left: 12px; top: 12px; color: var(--text-muted); font-size: 20px;">person</i>
+                    <input type="text" name="username" class="form-control" placeholder="choose_username" style="padding-left: 44px;" required>
+                </div>
                 {% if form.username.errors %}
-                    <div class="error">{{ form.username.errors }}</div>
+                    {% for error in form.username.errors %}
+                        <div style="color: var(--danger); font-size: 0.75rem; margin-top: 4px;">{{ error }}</div>
+                    {% endfor %}
                 {% endif %}
             </div>
-            <div class="form-row">
-                <label>Password</label>
-                {{ form.password1 }}
+            
+            <div style="text-align: left; margin-bottom: 20px;">
+                <label style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 8px;">Password</label>
+                <div style="position: relative;">
+                    <i class="material-icons-round" style="position: absolute; left: 12px; top: 12px; color: var(--text-muted); font-size: 20px;">lock</i>
+                    <input type="password" name="password1" class="form-control" placeholder="••••••••" style="padding-left: 44px;" required>
+                </div>
                 {% if form.password1.errors %}
-                    <div class="error">{{ form.password1.errors }}</div>
+                    {% for error in form.password1.errors %}
+                        <div style="color: var(--danger); font-size: 0.75rem; margin-top: 4px;">{{ error }}</div>
+                    {% endfor %}
                 {% endif %}
             </div>
-            <div class="form-row">
-                <label>Confirm Password</label>
-                {{ form.password2 }}
+            
+            <div style="text-align: left; margin-bottom: 24px;">
+                <label style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 8px;">Confirm Password</label>
+                <div style="position: relative;">
+                    <i class="material-icons-round" style="position: absolute; left: 12px; top: 12px; color: var(--text-muted); font-size: 20px;">verified_user</i>
+                    <input type="password" name="password2" class="form-control" placeholder="••••••••" style="padding-left: 44px;" required>
+                </div>
                 {% if form.password2.errors %}
-                    <div class="error">{{ form.password2.errors }}</div>
+                    {% for error in form.password2.errors %}
+                        <div style="color: var(--danger); font-size: 0.75rem; margin-top: 4px;">{{ error }}</div>
+                    {% endfor %}
                 {% endif %}
             </div>
-            {% include 'components/atoms/button.html' with label='Register' type='submit' %}
-            {% include 'components/atoms/button.html' with label='Back to Login' href='/accounts/login/' type='link-secondary' %}
+            
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    <div style="padding: 12px; background: rgba(239, 68, 68, 0.1); color: var(--danger); border-radius: 12px; font-size: 0.875rem; margin-bottom: 20px; font-weight: 500;">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1rem;">
+                Create Account
+            </button>
+            
+            <div style="margin-top: 24px; font-size: 0.875rem; color: var(--text-muted);">
+                Already have an account? 
+                <a href="{% url 'accounts:login' %}" style="color: var(--primary); font-weight: 700; text-decoration: none;">Sign In</a>
+            </div>
         </form>
     </div>
-    <script src="{% static 'js/app.js' %}"></script>
+    <script>
+        const html = document.documentElement;
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', savedTheme);
+    </script>
 </body>
 </html>
-
-
-
-

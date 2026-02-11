@@ -1,6 +1,15 @@
 <!-- [templates/components/organisms/sidebar.html] -->
 <nav class="menu">
-    <a href="{% url 'dashboard' %}" class="menu-item">Dashboard</a>
-    <a href="{% url 'students:list' %}" class="menu-item">Students</a>
-    <a href="{% url 'attendance:list' %}" class="menu-item">Attendance</a>
+    <a href="{% url 'dashboard' %}" class="menu-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+        <i class="material-icons-round">dashboard</i>
+        <span>Dashboard</span>
+    </a>
+    <a href="{% url 'students:list' %}" class="menu-item {% if 'students' in request.path %}active{% endif %}">
+        <i class="material-icons-round">people</i>
+        <span>Students</span>
+    </a>
+    <a href="{% url 'attendance:list' %}" class="menu-item {% if 'attendance' in request.path %}active{% endif %}">
+        <i class="material-icons-round">rule</i>
+        <span>Attendance</span>
+    </a>
 </nav>

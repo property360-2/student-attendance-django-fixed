@@ -1,36 +1,92 @@
 <!-- [templates/base.html] -->
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>{% block title %}Student Attendance{% endblock %}</title>
+    <title>{% block title %}AttendLite | Premium Student Management{% endblock %}</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    
+    <!-- CSS -->
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    
+    {% block extra_head %}{% endblock %}
 </head>
-<body class="light">
+<body>
     <div class="layout">
-        <aside class="sidebar">
+        <aside class="sidebar glass">
             {% include 'components/atoms/brand.html' with brand='AttendLite' %}
             {% include 'components/organisms/sidebar.html' %}
+            
+            <div style="margin-top: auto; padding-top: 20px;">
+                <button id="theme-toggle" class="btn btn-secondary" style="width: 100%; justify-content: start;">
+                    <i class="material-icons-round">dark_mode</i>
+                    <span>Toggle Theme</span>
+                </button>
+            </div>
         </aside>
+        
         <main class="content">
-            {% include 'components/molecules/navbar.html' %}
+            <header class="navbar">
+                {% include 'components/molecules/navbar.html' %}
+            </header>
+            
             <section class="messages">
                 {% if messages %}
                     <ul class="messages-list">
                         {% for message in messages %}
-                            <li class="msg {{ message.tags }}">{{ message }}</li>
+                            <li class="msg {{ message.tags }} glass">
+                                <i class="material-icons-round" style="font-size: 1.25rem;">
+                                    {% if message.tags == 'success' %}check_circle
+                                    {% elif message.tags == 'error' %}error
+                                    {% else %}info{% endif %}
+                                </i>
+                                {{ message }}
+                            </li>
                         {% endfor %}
                     </ul>
                 {% endif %}
             </section>
+            
             <section class="page">
                 {% block content %}{% endblock %}
             </section>
         </main>
     </div>
+
     {% block extra_scripts %}{% endblock %}
     <script src="{% static 'js/app.js' %}"></script>
+    <script>
+        // Simple Theme Toggle Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        
+        // Check for saved theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', savedTheme);
+        
+        themeToggle?.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update icon
+            const icon = themeToggle.querySelector('i');
+            if (icon) icon.textContent = newTheme === 'light' ? 'dark_mode' : 'light_mode';
+        });
+        
+        // Set initial icon
+        const icon = themeToggle?.querySelector('i');
+        if (icon) icon.textContent = savedTheme === 'light' ? 'dark_mode' : 'light_mode';
+    </script>
 </body>
 </html>

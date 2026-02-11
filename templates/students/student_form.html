@@ -1,24 +1,71 @@
 <!-- [templates/students/student_form.html] -->
 {% extends 'base.html' %}
-{% block title %}Student Form · AttendLite{% endblock %}
+{% block title %}{% if view.object %}Edit {{ view.object.first_name }}{% else %}Add Student{% endif %} | AttendLite{% endblock %}
+{% block page_title %}{% if view.object %}Edit Student{% else %}Add Student{% endif %}{% endblock %}
+
 {% block content %}
-<div class="panel">
+<div class="panel glass" style="max-width: 800px; margin: 0 auto; width: 100%;">
     <div class="panel-header">
-        <h3>{{ view.object|default_if_none:"Add Student" }}</h3>
+        <h3>
+            <i class="material-icons-round" style="vertical-align: bottom; margin-right: 8px; color: var(--primary);">
+                {% if view.object %}manage_accounts{% else %}person_add{% endif %}
+            </i>
+            {% if view.object %}Edit Record: {{ view.object }}{% else %}New Student Profile{% endif %}
+        </h3>
     </div>
-    <form method="post" class="form">
+    
+    <form method="post" style="padding: 32px;">
         {% csrf_token %}
+        
         <div class="grid-2">
-            <div class="form-row"><label>First name</label>{{ form.first_name }}</div>
-            <div class="form-row"><label>Last name</label>{{ form.last_name }}</div>
-            <div class="form-row"><label>Email</label>{{ form.email }}</div>
-            <div class="form-row"><label>Student ID</label>{{ form.student_id }}</div>
-            <div class="form-row"><label>Class / Section</label>{{ form.class_section }}</div>
-            <div class="form-row checkbox-row"><label>Active</label>{{ form.is_active }}</div>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 8px;">First Name</label>
+                <input type="text" name="first_name" value="{{ form.first_name.value|default:'' }}" class="form-control" required>
+                {% if form.first_name.errors %}<div style="color: var(--danger); font-size: 0.75rem; margin-top: 4px;">{{ form.first_name.errors }}</div>{% endif %}
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 8px;">Last Name</label>
+                <input type="text" name="last_name" value="{{ form.last_name.value|default:'' }}" class="form-control" required>
+                {% if form.last_name.errors %}<div style="color: var(--danger); font-size: 0.75rem; margin-top: 4px;">{{ form.last_name.errors }}</div>{% endif %}
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 8px;">Email Address</label>
+                <input type="email" name="email" value="{{ form.email.value|default:'' }}" class="form-control" required>
+                {% if form.email.errors %}<div style="color: var(--danger); font-size: 0.75rem; margin-top: 4px;">{{ form.email.errors }}</div>{% endif %}
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 8px;">Student ID / SR-Code</label>
+                <input type="text" name="student_id" value="{{ form.student_id.value|default:'' }}" class="form-control" required>
+                {% if form.student_id.errors %}<div style="color: var(--danger); font-size: 0.75rem; margin-top: 4px;">{{ form.student_id.errors }}</div>{% endif %}
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 8px;">Class / Section</label>
+                <input type="text" name="class_section" value="{{ form.class_section.value|default:'' }}" class="form-control" placeholder="e.g. BSIT 2A">
+                {% if form.class_section.errors %}<div style="color: var(--danger); font-size: 0.75rem; margin-top: 4px;">{{ form.class_section.errors }}</div>{% endif %}
+            </div>
+            
+            <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 12px; height: 44px; margin-top: 24px;">
+                <input type="checkbox" name="is_active" id="id_is_active" {% if form.is_active.value %}checked{% endif %} style="width: 20px; height: 20px; cursor: pointer;">
+                <label for="id_is_active" style="font-weight: 600; font-size: 0.875rem; cursor: pointer;">Active Enrollment</label>
+            </div>
         </div>
-        <div class="mt-2">
-            {% include 'components/atoms/button.html' with label='Save' type='submit' %}
-            {% include 'components/atoms/button.html' with label='Cancel' href='/students/' type='link-secondary' %}
+        
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <div style="padding: 12px; background: rgba(239, 68, 68, 0.1); color: var(--danger); border-radius: 12px; font-size: 0.875rem; margin-bottom: 20px;">{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div style="margin-top: 32px; display: flex; gap: 12px; border-top: 1px solid var(--line); padding-top: 32px;">
+            <button type="submit" class="btn btn-primary" style="padding: 12px 32px;">
+                <i class="material-icons-round">save</i>
+                {% if view.object %}Update Profile{% else %}Create Student{% endif %}
+            </button>
+            <a href="{% url 'students:list' %}" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
 </div>

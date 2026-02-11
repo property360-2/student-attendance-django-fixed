@@ -1,50 +1,90 @@
 <!-- [templates/attendance/attendance_list.html] -->
 {% extends 'base.html' %}
-{% block title %}Attendance · AttendLite{% endblock %}
+{% block title %}Attendance History | AttendLite{% endblock %}
+{% block page_title %}Attendance History{% endblock %}
+
 {% block content %}
-<div class="panel">
+<div class="panel glass">
     <div class="panel-header">
-        <h3>Attendance Records{% if selected_student %} – {{ selected_student }}{% elif selected_date %} – {{ selected_date }}{% endif %}</h3>
-        <div class="panel-actions">
-            <form method="get" class="inline">
+        <h3>
+            <i class="material-icons-round" style="vertical-align: bottom; margin-right: 8px; color: var(--primary);">history_edu</i>
+            {% if selected_student %}Records for {{ selected_student }}{% elif selected_date %}Records for {{ selected_date|date:"F d, Y" }}{% else %}All Records{% endif %}
+        </h3>
+        <div class="panel-actions" style="display: flex; gap: 12px; align-items: center;">
+            <form method="get" style="display: flex; gap: 8px; align-items: center;">
                 {% if request.GET.student %}
                 <input type="hidden" name="student" value="{{ request.GET.student }}">
                 {% endif %}
-                <input class="input" type="date" name="date" value="{{ selected_date|default:'' }}"/>
-                {% include 'components/atoms/button.html' with label='Filter' type='submit' %}
+                <input class="form-control" type="date" name="date" value="{{ selected_date|date:'Y-m-d'|default:'' }}" style="padding: 8px 12px; width: 160px;"/>
+                <button type="submit" class="btn btn-secondary" style="padding: 8px 16px;">Filter</button>
             </form>
-            {% if selected_student %}
-            <a href="/attendance/" class="btn secondary">Clear Filter</a>
+            {% if selected_student or selected_date %}
+            <a href="{% url 'attendance:list' %}" class="btn btn-secondary" style="padding: 8px 16px;">Clear</a>
             {% endif %}
-            {% include 'components/atoms/button.html' with label='Mark Attendance' href='/attendance/mark/' type='link' %}
+            <a href="{% url 'attendance:mark' %}" class="btn btn-primary">
+                <i class="material-icons-round">edit_calendar</i>
+                <span>Mark New</span>
+            </a>
         </div>
     </div>
     <div class="table-responsive">
         <table class="table">
             <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>Student</th>
-                    <th>Class / Section</th>
+                    <th style="width: 150px;">Date</th>
+                    <th>Student Name</th>
                     <th>Status</th>
-                    <th>Remarks</th>
-                    <th>Late Reason</th>
-                    <th>By</th>
+                    <th>Details</th>
+                    <th>Recorded By</th>
                 </tr>
             </thead>
             <tbody>
                 {% for r in records %}
                     <tr>
-                        <td>{{ r.date }}</td>
-                        <td>{{ r.student }}</td>
-                        <td>{{ r.student.class_section|default:'—' }}</td>
-                        <td>{% include 'components/atoms/badge.html' with text=r.get_status_display tone=r.status %}</td>
-                        <td>{{ r.remarks }}</td>
-                        <td>{{ r.late_reason }}</td>
-                        <td>{{ r.created_by|default:'—' }}</td>
+                        <td>
+                            <div style="font-weight: 700; color: var(--text);">{{ r.date|date:"M d, Y" }}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">{{ r.date|date:"l" }}</div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 700;">{{ r.student.last_name }}, {{ r.student.first_name }}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">{{ r.student.student_id }} {% if r.student.class_section %}• {{ r.student.class_section }}{% endif %}</div>
+                        </td>
+                        <td>
+                            {% if r.status == 'present' %}
+                            <span class="badge badge-success" style="display: inline-flex; align-items: center; gap: 4px;">
+                                <i class="material-icons-round" style="font-size: 14px;">check_circle</i> Present
+                            </span>
+                            {% elif r.status == 'absent' %}
+                            <span class="badge badge-danger" style="display: inline-flex; align-items: center; gap: 4px;">
+                                <i class="material-icons-round" style="font-size: 14px;">cancel</i> Absent
+                            </span>
+                            {% elif r.status == 'late' %}
+                            <span class="badge badge-warning" style="display: inline-flex; align-items: center; gap: 4px;">
+                                <i class="material-icons-round" style="font-size: 14px;">schedule</i> Late
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if r.remarks %}<div style="font-size: 0.875rem;"><span style="font-weight: 600;">Remarks:</span> {{ r.remarks }}</div>{% endif %}
+                            {% if r.late_reason %}<div style="font-size: 0.875rem;"><span style="font-weight: 600;">Late Reason:</span> {{ r.late_reason }}</div>{% endif %}
+                            {% if not r.remarks and not r.late_reason %}<span style="color: var(--text-muted); font-size: 0.875rem;">—</span>{% endif %}
+                        </td>
+                        <td style="font-size: 0.875rem;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <i class="material-icons-round" style="font-size: 16px; color: var(--text-muted);">person_outline</i>
+                                {{ r.created_by.username|default:'System'|title }}
+                            </div>
+                        </td>
                     </tr>
                 {% empty %}
-                    <tr><td colspan="5">No records.</td></tr>
+                    <tr>
+                        <td colspan="5" style="padding: 60px; text-align: center;">
+                            <div style="color: var(--text-muted);">
+                                <i class="material-icons-round" style="font-size: 64px; opacity: 0.2;">history</i>
+                                <p style="margin-top: 16px; font-weight: 500;">No attendance records found for this criteria.</p>
+                            </div>
+                        </td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>

@@ -1,6 +1,7 @@
 # [accounts/forms.py]
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.models import User
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(
@@ -17,12 +18,7 @@ class LoginForm(AuthenticationForm):
         self.error_messages['invalid_login'] = 'Incorrect username or password. Please try again.'
         self.error_messages['inactive'] = 'This account is inactive.'
 
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-
 class RegisterForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ('username', 'password1', 'password2')
-
-
+        fields = ('username',)

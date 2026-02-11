@@ -1,8 +1,7 @@
 <!-- [templates/components/atoms/brand.html] -->
-<div class="brand">
-    <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.1"/>
-        <path d="M6 12h12M12 6v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    </svg>
+<a href="{% url 'dashboard' %}" class="brand">
+    <div class="brand-icon">
+        <i class="material-icons-round">how_to_reg</i>
+    </div>
     <span>{{ brand }}</span>
-</div>
+</a>

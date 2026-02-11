@@ -1,37 +1,60 @@
 <!-- [templates/components/organisms/stats-cards.html] -->
 <div class="grid-4 stats">
-    <div class="card stat">
-        <div class="stat-label">Students</div>
-        <div class="stat-value">{{ total_students }}</div>
-    </div>
-    <div class="card stat">
-        <div class="stat-label">
-            Present (All Dates)
-            <a href="/attendance/" class="link" style="font-size:12px; margin-left:8px;">View Dates</a>
+    <div class="card stat glass">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div>
+                <div class="stat-label">Total Students</div>
+                <div class="stat-value">{{ total_students }}</div>
+            </div>
+            <i class="material-icons-round" style="color: var(--primary); background: rgba(99, 102, 241, 0.1); padding: 10px; border-radius: 12px;">groups</i>
         </div>
-        <div class="stat-value">{{ present }}</div>
-        {% if today_present %}
-        <div style="font-size:12px; color:var(--muted); margin-top:4px;">Today: {{ today_present }}</div>
-        {% endif %}
     </div>
-    <div class="card stat">
-        <div class="stat-label">
-            Absent (All Dates)
-            <a href="/attendance/" class="link" style="font-size:12px; margin-left:8px;">View Dates</a>
+    
+    <div class="card stat glass" style="border-left: 4px solid var(--success);">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div>
+                <div class="stat-label">Present</div>
+                <div class="stat-value">{{ present }}</div>
+                {% if today_present %}
+                <div style="font-size: 12px; color: var(--success); font-weight: 600; margin-top: 4px;">
+                    <i class="material-icons-round" style="font-size: 14px; vertical-align: middle;">arrow_upward</i>
+                    {{ today_present }} today
+                </div>
+                {% endif %}
+            </div>
+            <i class="material-icons-round" style="color: var(--success); background: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: 12px;">check_circle</i>
         </div>
-        <div class="stat-value">{{ absent }}</div>
-        {% if today_absent %}
-        <div style="font-size:12px; color:var(--muted); margin-top:4px;">Today: {{ today_absent }}</div>
-        {% endif %}
     </div>
-    <div class="card stat">
-        <div class="stat-label">
-            Late (All Dates)
-            <a href="/attendance/" class="link" style="font-size:12px; margin-left:8px;">View Dates</a>
+    
+    <div class="card stat glass" style="border-left: 4px solid var(--danger);">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div>
+                <div class="stat-label">Absent</div>
+                <div class="stat-value">{{ absent }}</div>
+                {% if today_absent %}
+                <div style="font-size: 12px; color: var(--danger); font-weight: 600; margin-top: 4px;">
+                    <i class="material-icons-round" style="font-size: 14px; vertical-align: middle;">warning</i>
+                    {{ today_absent }} today
+                </div>
+                {% endif %}
+            </div>
+            <i class="material-icons-round" style="color: var(--danger); background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 12px;">cancel</i>
         </div>
-        <div class="stat-value">{{ late }}</div>
-        {% if today_late %}
-        <div style="font-size:12px; color:var(--muted); margin-top:4px;">Today: {{ today_late }}</div>
-        {% endif %}
+    </div>
+    
+    <div class="card stat glass" style="border-left: 4px solid var(--warning);">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div>
+                <div class="stat-label">Late</div>
+                <div class="stat-value">{{ late }}</div>
+                {% if today_late %}
+                <div style="font-size: 12px; color: var(--warning); font-weight: 600; margin-top: 4px;">
+                    <i class="material-icons-round" style="font-size: 14px; vertical-align: middle;">schedule</i>
+                    {{ today_late }} today
+                </div>
+                {% endif %}
+            </div>
+            <i class="material-icons-round" style="color: var(--warning); background: rgba(245, 158, 11, 0.1); padding: 10px; border-radius: 12px;">history</i>
+        </div>
     </div>
 </div>

@@ -1,25 +1,35 @@
 {% extends 'base.html' %}
-{% block title %}Dashboard · Student Attendance{% endblock %}
+{% block title %}Dashboard | AttendLite{% endblock %}
+{% block page_title %}Overview{% endblock %}
+
 {% block content %}
 {% include 'components/organisms/stats-cards.html' with total_students=total_students present=present absent=absent late=late today=today %}
 
-<div class="panel">
+<div class="panel glass mt-2">
     <div class="panel-header">
-        <h3>Quick Actions</h3>
+        <h3><i class="material-icons-round" style="vertical-align: bottom; margin-right: 8px; color: var(--primary);">bolt</i>Quick Actions</h3>
     </div>
-    <div class="actions">
-        {% include 'components/atoms/button.html' with label='Add Student' href='/students/add/' type='link' %}
-        {% include 'components/atoms/button.html' with label='Mark Attendance' href='/attendance/mark/' type='link' %}
-        {% include 'components/atoms/button.html' with label='View All Attendance' href='/attendance/' type='link' %}
-        {% include 'components/atoms/button.html' with label='Logout' href='/accounts/logout/' type='link' %}
+    <div class="actions" style="display: flex; gap: 12px; padding: 20px;">
+        <a href="{% url 'students:add' %}" class="btn btn-primary">
+            <i class="material-icons-round">person_add</i>
+            <span>Add Student</span>
+        </a>
+        <a href="{% url 'attendance:mark' %}" class="btn btn-secondary">
+            <i class="material-icons-round">edit_calendar</i>
+            <span>Mark Attendance</span>
+        </a>
+        <a href="{% url 'attendance:list' %}" class="btn btn-secondary">
+            <i class="material-icons-round">visibility</i>
+            <span>View Records</span>
+        </a>
     </div>
 </div>
 
-<div class="panel">
+<div class="panel glass">
     <div class="panel-header">
-        <h3>Attendance Dates</h3>
+        <h3><i class="material-icons-round" style="vertical-align: bottom; margin-right: 8px; color: var(--primary);">calendar_today</i>Recent Attendance Dates</h3>
         <div class="panel-actions">
-            {% include 'components/atoms/button.html' with label='View All Dates' href='/attendance/' type='link' %}
+            <a href="{% url 'attendance:list' %}" class="btn btn-secondary" style="padding: 8px 16px;">View All</a>
         </div>
     </div>
     <div class="table-responsive">
@@ -28,49 +38,55 @@
             <thead>
                 <tr>
                     <th>Date</th>
-                    <th>Present</th>
-                    <th>Absent</th>
-                    <th>Late</th>
+                    <th>Attendance Status</th>
                     <th>Total</th>
-                    <th>Actions</th>
+                    <th style="text-align: right;">Action</th>
                 </tr>
             </thead>
             <tbody>
-                {% for date_stat in dates_with_stats %}
+                {% for date_stat in dates_with_stats|slice:":5" %}
                 <tr>
-                    <td><strong>{{ date_stat.date }}</strong></td>
                     <td>
-                        {% include 'components/atoms/badge.html' with text=date_stat.present tone='present' %}
+                        <div style="font-weight: 700; color: var(--text);">{{ date_stat.date|date:"M d, Y" }}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">{{ date_stat.date|date:"l" }}</div>
                     </td>
                     <td>
-                        {% include 'components/atoms/badge.html' with text=date_stat.absent tone='absent' %}
+                        <div style="display: flex; gap: 8px;">
+                            <span class="badge badge-success">{{ date_stat.present }} Present</span>
+                            <span class="badge badge-danger">{{ date_stat.absent }} Absent</span>
+                            <span class="badge badge-warning">{{ date_stat.late }} Late</span>
+                        </div>
                     </td>
-                    <td>
-                        {% include 'components/atoms/badge.html' with text=date_stat.late tone='late' %}
-                    </td>
-                    <td>{{ date_stat.total }}</td>
-                    <td>
-                        <a href="/attendance/?date={{ date_stat.date|date:'Y-m-d' }}" class="link">View</a>
+                    <td><span style="font-weight: 600;">{{ date_stat.total }}</span></td>
+                    <td style="text-align: right;">
+                        <a href="{% url 'attendance:list' %}?date={{ date_stat.date|date:'Y-m-d' }}" class="btn btn-secondary" style="padding: 6px 12px; border-radius: 8px;">
+                            <i class="material-icons-round" style="font-size: 1rem;">open_in_new</i>
+                        </a>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
         {% else %}
-        <p class="text-center">No attendance records yet.</p>
+        <div style="padding: 40px; text-align: center; color: var(--text-muted);">
+            <i class="material-icons-round" style="font-size: 48px; opacity: 0.2;">event_busy</i>
+            <p style="margin-top: 12px;">No attendance records found.</p>
+        </div>
         {% endif %}
     </div>
 </div>
 
-<div class="panel">
+<div class="panel glass">
     <div class="panel-header">
-        <h3>Student Attendance Summary</h3>
+        <h3><i class="material-icons-round" style="vertical-align: bottom; margin-right: 8px; color: var(--primary);">leaderboard</i>Class Performance</h3>
         <div class="panel-actions">
-            <form method="get" class="inline" style="margin:0;">
-                <input type="text" name="search" value="{{ search_query }}" placeholder="Search student..." class="input" style="width:250px;">
-                <button type="submit" class="btn">Search</button>
+            <form method="get" class="inline" style="margin:0; display: flex; gap: 8px;">
+                <input type="text" name="search" value="{{ search_query }}" placeholder="Search student..." class="form-control" style="max-width:200px; padding: 8px 16px;">
+                <button type="submit" class="btn btn-primary" style="padding: 8px 16px;">
+                    <i class="material-icons-round" style="font-size: 1.25rem;">search</i>
+                </button>
                 {% if search_query %}
-                <a href="?" class="btn secondary">Clear</a>
+                <a href="?" class="btn btn-secondary" style="padding: 8px 16px;">Clear</a>
                 {% endif %}
             </form>
         </div>
@@ -79,15 +95,12 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th style="width:60px;">Rank</th>
-                    <th>Student</th>
-                    <th>Total Records</th>
-                    <th>Present</th>
-                    <th>Absent</th>
-                    <th>Late</th>
+                    <th style="width:80px;">Rank</th>
+                    <th>Student Info</th>
+                    <th>Records</th>
+                    <th>Performance</th>
                     <th>Points</th>
-                    <th>Most Common</th>
-                    <th>Actions</th>
+                    <th style="text-align: right;">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -95,90 +108,69 @@
                 <tr{% if stat.is_late_risk %} class="row-late-risk"{% endif %}>
                     <td>
                         {% if stat.rank == 1 %}
-                        <span class="badge success" style="font-size:16px; padding:6px 10px;">🥇 #{{ stat.rank }}</span>
+                        <div style="font-size: 1.5rem;">🥇</div>
                         {% elif stat.rank == 2 %}
-                        <span class="badge" style="font-size:16px; padding:6px 10px; background:#2563eb; color:#fff;">🥈 #{{ stat.rank }}</span>
+                        <div style="font-size: 1.5rem;">🥈</div>
                         {% elif stat.rank == 3 %}
-                        <span class="badge" style="font-size:16px; padding:6px 10px; background:#d97706; color:#fff;">🥉 #{{ stat.rank }}</span>
+                        <div style="font-size: 1.5rem;">🥉</div>
                         {% elif stat.rank %}
-                        <span style="font-weight:600; color:var(--muted);">#{{ stat.rank }}</span>
+                        <div style="font-weight: 700; color: var(--text-muted); padding-left: 8px;">#{{ stat.rank }}</div>
                         {% else %}
-                        <span style="font-weight:600; color:var(--muted);">—</span>
+                        <div style="color: var(--text-muted); padding-left: 8px;">—</div>
                         {% endif %}
                     </td>
                     <td>
-                        <strong>{{ stat.student.last_name }}, {{ stat.student.first_name }}</strong><br>
-                        <small class="text-muted">{{ stat.student.student_id }}</small>
-                        {% if stat.student.class_section %}
-                        <br><small class="text-muted">Class: {{ stat.student.class_section }}</small>
-                        {% endif %}
-                        {% if stat.is_perfect %}
-                        <div>
-                            <span class="badge success" style="margin-top:4px;">⭐ Perfect Attendance</span>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div class="glass" style="width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: rgba(99, 102, 241, 0.05);">
+                                <span style="font-weight: 700; color: var(--primary); font-size: 0.8rem;">{{ stat.student.first_name|first }}{{ stat.student.last_name|first }}</span>
+                            </div>
+                            <div>
+                                <div style="font-weight: 700;">{{ stat.student.last_name }}, {{ stat.student.first_name }}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">
+                                    {{ stat.student.student_id }} {% if stat.student.class_section %}• {{ stat.student.class_section }}{% endif %}
+                                </div>
+                                {% if stat.is_perfect %}
+                                <span class="badge badge-success" style="font-size: 0.65rem; padding: 2px 6px; margin-top: 4px; display: inline-flex; align-items: center; gap: 4px;">
+                                    <i class="material-icons-round" style="font-size: 10px;">star</i> Perfect
+                                </span>
+                                {% endif %}
+                                {% if stat.is_late_risk %}
+                                <span class="badge badge-danger" style="font-size: 0.65rem; padding: 2px 6px; margin-top: 4px; display: inline-flex; align-items: center; gap: 4px;">
+                                    <i class="material-icons-round" style="font-size: 10px;">report_problem</i> Late Risk
+                                </span>
+                                {% endif %}
+                            </div>
                         </div>
-                        {% endif %}
-                        {% if stat.is_late_risk %}
-                        <div>
-                            <span class="badge danger" style="margin-top:4px;">⚠ Frequently Late</span>
-                        </div>
-                        {% endif %}
                     </td>
-                    <td>{{ stat.total_records }}</td>
-                    <td>
+                    <td><span style="font-weight: 600;">{{ stat.total_records }}</span></td>
+                    <td style="min-width: 150px;">
                         {% if stat.total_records > 0 %}
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <span>{{ stat.present_count }}</span>
-                            <span class="text-muted">({{ stat.present_pct }}%)</span>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.75rem;">
+                                <span style="font-weight: 600; color: var(--success);">{{ stat.present_pct }}% Present</span>
+                            </div>
+                            <div style="height: 6px; width: 100%; background: var(--line); border-radius: 3px; overflow: hidden;">
+                                <div style="height: 100%; width: {{ stat.present_pct }}%; background: var(--success); border-radius: 3px;"></div>
+                            </div>
                         </div>
-                        <div class="progress-bar" style="width: {{ stat.present_pct }}%; background-color: #16a34a;"></div>
                         {% else %}
-                        <span class="text-muted">—</span>
+                        <span style="color: var(--text-muted); font-size: 0.875rem;">No data</span>
                         {% endif %}
                     </td>
                     <td>
-                        {% if stat.total_records > 0 %}
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <span>{{ stat.absent_count }}</span>
-                            <span class="text-muted">({{ stat.absent_pct }}%)</span>
-                        </div>
-                        <div class="progress-bar" style="width: {{ stat.absent_pct }}%; background-color: #dc2626;"></div>
-                        {% else %}
-                        <span class="text-muted">—</span>
-                        {% endif %}
+                        <div style="font-weight: 800; color: var(--primary); font-size: 1.125rem;">{{ stat.points|floatformat:1 }}</div>
                     </td>
-                    <td>
-                        {% if stat.total_records > 0 %}
-                        <strong>{{ stat.points|floatformat:1 }}</strong>
-                        {% else %}
-                        <span class="text-muted">—</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if stat.total_records > 0 %}
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <span>{{ stat.late_count }}</span>
-                            <span class="text-muted">({{ stat.late_pct }}%)</span>
-                        </div>
-                        <div class="progress-bar" style="width: {{ stat.late_pct }}%; background-color: #d97706;"></div>
-                        {% else %}
-                        <span class="text-muted">—</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if stat.most_common_status %}
-                        {% include 'components/atoms/badge.html' with text=stat.most_common_status|title tone=stat.most_common_status %}
-                        <small>({{ stat.most_common_count }}x)</small>
-                        {% else %}
-                        <span class="text-muted">No records</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <a href="/attendance/?student={{ stat.student.id }}" class="link">View Records</a>
+                    <td style="text-align: right;">
+                        <a href="{% url 'attendance:list' %}?student={{ stat.student.id }}" class="btn btn-secondary" style="padding: 6px 12px; border-radius: 8px;">
+                            <i class="material-icons-round" style="font-size: 1rem;">insights</i>
+                        </a>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" class="text-center">No students found.</td>
+                    <td colspan="6" style="padding: 40px; text-align: center; color: var(--text-muted);">
+                        No students found.
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -186,18 +178,20 @@
     </div>
 </div>
 
-<div class="panel">
+<div class="panel glass">
     <div class="panel-header">
-        <h3>Attendance Charts</h3>
+        <h3><i class="material-icons-round" style="vertical-align: bottom; margin-right: 8px; color: var(--primary);">show_chart</i>Attendance Trends</h3>
     </div>
     <div class="charts-grid" id="charts-container">
         {% for chart in chart_data.charts_by_month %}
-        <div class="chart-container">
-            <h4>{{ chart.month_label }}</h4>
+        <div class="chart-container glass">
+            <h4 style="margin-bottom: 20px;">{{ chart.month_label }}</h4>
             <canvas id="chart-{{ chart.month_key }}"></canvas>
         </div>
         {% empty %}
-        <p class="text-center">No attendance records yet.</p>
+        <div style="padding:40px; text-align: center; color: var(--text-muted);">
+            No attendance data available for charts.
+        </div>
         {% endfor %}
     </div>
 </div>
@@ -214,7 +208,6 @@
 
     if (!data.charts_by_month || data.charts_by_month.length === 0) return;
 
-    // Create a chart for each month
     data.charts_by_month.forEach(function(chartData) {
       const canvasId = 'chart-' + chartData.month_key;
       const ctx = document.getElementById(canvasId);
@@ -223,110 +216,45 @@
       new Chart(ctx, {
         type: 'line',
         data: {
-          labels: chartData.labels,
+          labels: chartData.labels.map(l => {
+              const d = new Date(l);
+              return d.toLocaleDateString(undefined, {month: 'short', day: 'numeric'});
+          }),
           datasets: [
             {
               label: 'Present',
               data: chartData.present,
-              borderColor: '#16a34a',
-              backgroundColor: 'rgba(22,163,74,0.15)',
-              tension: 0.3,
-              borderWidth: 2,
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              tension: 0.4,
+              borderWidth: 3,
               pointRadius: 4,
-              pointHoverRadius: 6,
+              fill: true,
             },
             {
               label: 'Absent',
               data: chartData.absent,
-              borderColor: '#dc2626',
-              backgroundColor: 'rgba(220,38,38,0.15)',
-              tension: 0.3,
-              borderWidth: 2,
+              borderColor: '#ef4444',
+              backgroundColor: 'rgba(239, 68, 68, 0.1)',
+              tension: 0.4,
+              borderWidth: 3,
               pointRadius: 4,
-              pointHoverRadius: 6,
-            },
-            {
-              label: 'Late',
-              data: chartData.late,
-              borderColor: '#d97706',
-              backgroundColor: 'rgba(217,119,6,0.15)',
-              tension: 0.3,
-              borderWidth: 2,
-              pointRadius: 4,
-              pointHoverRadius: 6,
-            },
+              fill: true,
+            }
           ],
         },
         options: {
           responsive: true,
-          maintainAspectRatio: true,
-          aspectRatio: 2.5,
-          layout: {
-            padding: {
-              left: 10,
-              right: 10,
-              top: 10,
-              bottom: 10,
-            },
-          },
           plugins: {
-            legend: { 
-              position: 'bottom',
-              labels: {
-                font: {
-                  size: 13,
-                },
-                padding: 15,
-              },
-            },
-            tooltip: {
-              backgroundColor: 'rgba(0,0,0,0.8)',
-              padding: 12,
-              titleFont: {
-                size: 14,
-              },
-              bodyFont: {
-                size: 13,
-              },
-            },
+            legend: { position: 'bottom' },
           },
           scales: {
-            x: {
-              ticks: {
-                maxRotation: 45,
-                minRotation: 0,
-                font: {
-                  size: 11,
-                },
-                padding: 8,
-              },
-              grid: {
-                display: true,
-                color: 'rgba(0,0,0,0.05)',
-              },
-            },
-            y: {
-              beginAtZero: true,
-              ticks: {
-                font: {
-                  size: 12,
-                },
-                padding: 8,
-              },
-              grid: {
-                display: true,
-                color: 'rgba(0,0,0,0.05)',
-              },
-            },
-          },
-          interaction: {
-            intersect: false,
-            mode: 'index',
-          },
+            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+            x: { grid: { display: false } }
+          }
         },
       });
     });
-
   })();
 </script>
 {% endblock %}

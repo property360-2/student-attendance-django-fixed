@@ -1,10 +1,16 @@
 <!-- [templates/components/molecules/navbar.html] -->
-<div class="navbar">
-    <div class="navbar-left">
-        <h2 class="page-title">{% block page_title %}{% endblock %}</h2>
+<div class="navbar-left">
+    <h2 style="font-size: 1.5rem; font-weight: 700;">{% block page_title %}Overview{% endblock %}</h2>
+</div>
+<div class="navbar-right" style="display: flex; align-items: center; gap: 16px;">
+    <div style="text-align: right;">
+        <div style="font-weight: 600; font-size: 0.875rem;">{{ request.user.username|title }}</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">Instructor</div>
     </div>
-    <div class="navbar-right">
-        <span class="welcome">Hi, {{ request.user.username }}</span>
-        <a class="link" href="{% url 'accounts:logout' %}">Logout</a>
+    <div class="glass" style="width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--panel);">
+        <i class="material-icons-round" style="color: var(--primary);">account_circle</i>
     </div>
+    <a href="{% url 'accounts:logout' %}" class="btn btn-secondary" style="padding: 8px 12px; border-radius: 10px;">
+        <i class="material-icons-round" style="font-size: 1.25rem;">logout</i>
+    </a>
 </div>

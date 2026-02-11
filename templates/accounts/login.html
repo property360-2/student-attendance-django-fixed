@@ -1,52 +1,107 @@
 <!-- [templates/accounts/login.html] -->
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Login · AttendLite</title>
+    <title>Sign In | AttendLite</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <style>
+        .login-page {
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 20px;
+        }
+        [data-theme="dark"] .login-page {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            text-align: center;
+        }
+        .login-logo {
+            margin-bottom: 32px;
+            display: inline-flex;
+            justify-content: center;
+        }
+    </style>
 </head>
-<body class="light login-page">
-    <div class="login-card">
-        {% include 'components/atoms/brand.html' with brand='AttendLite' %}
-        <h1 class="mt-2">Sign in</h1>
-        <form method="post" class="form">
+<body class="login-page">
+    <div class="login-card panel glass">
+        <div class="login-logo">
+            {% include 'components/atoms/brand.html' with brand='AttendLite' %}
+        </div>
+        
+        <h1 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 8px;">Welcome Back</h1>
+        <p style="color: var(--text-muted); margin-bottom: 32px;">Please enter your details to sign in.</p>
+        
+        <form method="post" novalidate>
             {% csrf_token %}
-            <div class="form-row">
-                <label>Username</label>
-                {{ form.username }}
+            
+            <div style="text-align: left; margin-bottom: 20px;">
+                <label style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 8px;">Username</label>
+                <div style="position: relative;">
+                    <i class="material-icons-round" style="position: absolute; left: 12px; top: 12px; color: var(--text-muted); font-size: 20px;">person</i>
+                    <input type="text" name="username" class="form-control" placeholder="your_username" style="padding-left: 44px;" required>
+                </div>
+                {% if form.username.errors %}
+                    {% for error in form.username.errors %}
+                        <div style="color: var(--danger); font-size: 0.75rem; margin-top: 4px;">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
             </div>
-            <div class="form-row">
-                <label>Password</label>
-                {{ form.password }}
+            
+            <div style="text-align: left; margin-bottom: 24px;">
+                <label style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 8px;">Password</label>
+                <div style="position: relative;">
+                    <i class="material-icons-round" style="position: absolute; left: 12px; top: 12px; color: var(--text-muted); font-size: 20px;">lock</i>
+                    <input type="password" name="password" class="form-control" placeholder="••••••••" style="padding-left: 44px;" required>
+                </div>
+                {% if form.password.errors %}
+                    {% for error in form.password.errors %}
+                        <div style="color: var(--danger); font-size: 0.75rem; margin-top: 4px;">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
             </div>
+            
             {% if form.non_field_errors %}
                 {% for error in form.non_field_errors %}
-                    <div class="error" style="padding:10px; background:rgba(220,38,38,.08); border:1px solid rgba(220,38,38,.35); border-radius:8px; margin-bottom:12px;">
+                    <div style="padding: 12px; background: rgba(239, 68, 68, 0.1); color: var(--danger); border-radius: 12px; font-size: 0.875rem; margin-bottom: 20px; font-weight: 500;">
                         {{ error }}
                     </div>
                 {% endfor %}
             {% endif %}
-            {% if form.username.errors %}
-                {% for error in form.username.errors %}
-                    <div class="error" style="padding:8px; background:rgba(220,38,38,.08); border:1px solid rgba(220,38,38,.35); border-radius:8px; margin-bottom:8px;">
-                        Username: {{ error }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-            {% if form.password.errors %}
-                {% for error in form.password.errors %}
-                    <div class="error" style="padding:8px; background:rgba(220,38,38,.08); border:1px solid rgba(220,38,38,.35); border-radius:8px; margin-bottom:8px;">
-                        Password: {{ error }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-            {% include 'components/atoms/button.html' with label='Sign in' type='submit' %}
-            {% include 'components/atoms/button.html' with label='Create Account' href='/accounts/register/' type='link-secondary' %}
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1rem;">
+                Sign In
+            </button>
+            
+            <div style="margin-top: 24px; font-size: 0.875rem; color: var(--text-muted);">
+                Don't have an account? 
+                <a href="{% url 'accounts:register' %}" style="color: var(--primary); font-weight: 700; text-decoration: none;">Create One</a>
+            </div>
         </form>
     </div>
-    <script src="{% static 'js/app.js' %}"></script>
+    
+    <script>
+        // Simple Theme Check
+        const html = document.documentElement;
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', savedTheme);
+    </script>
 </body>
 </html>

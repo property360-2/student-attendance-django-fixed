@@ -1,16 +1,30 @@
 <!-- [templates/students/student_confirm_delete.html] -->
 {% extends 'base.html' %}
-{% block title %}Delete Student · AttendLite{% endblock %}
+{% block title %}Delete Student | AttendLite{% endblock %}
+{% block page_title %}Confirm Deletion{% endblock %}
+
 {% block content %}
-<div class="panel">
-    <div class="panel-header">
-        <h3>Delete Student</h3>
+<div class="panel glass" style="max-width: 500px; margin: 40px auto; width: 100%; text-align: center;">
+    <div style="padding: 40px;">
+        <div class="glass" style="width: 80px; height: 80px; border-radius: 50%; background: rgba(239, 68, 68, 0.1); color: var(--danger); display: grid; place-items: center; margin: 0 auto 24px;">
+            <i class="material-icons-round" style="font-size: 40px;">warning_amber</i>
+        </div>
+        
+        <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 12px;">Are you absolutely sure?</h3>
+        <p style="color: var(--text-muted); margin-bottom: 32px; line-height: 1.6;">
+            You are about to delete <strong>{{ object }}</strong>. This action will also delete all associated attendance records and cannot be undone.
+        </p>
+        
+        <form method="post" style="display: flex; flex-direction: column; gap: 12px;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger" style="width: 100%; padding: 14px; font-size: 1rem;">
+                <i class="material-icons-round">delete_forever</i>
+                Yes, Delete Record
+            </button>
+            <a href="{% url 'students:list' %}" class="btn btn-secondary" style="width: 100%; padding: 14px; font-size: 1rem;">
+                No, Keep Record
+            </a>
+        </form>
     </div>
-    <p>Are you sure you want to delete <strong>{{ object }}</strong>?</p>
-    <form method="post">
-        {% csrf_token %}
-        {% include 'components/atoms/button.html' with label='Confirm Delete' type='submit-danger' %}
-        {% include 'components/atoms/button.html' with label='Cancel' href='/students/' type='link-secondary' %}
-    </form>
 </div>
 {% endblock %}
